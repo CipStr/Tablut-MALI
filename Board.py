@@ -138,3 +138,49 @@ class Board:
     def getBlackPieces(self):
         # return the number of black pieces
         return self.getBoard().tolist().count(2)
+    
+    def getValueAt(self, x, y):
+        # return the value of the piece at (x, y)
+        return self.__board[x][y]
+    
+    def canWhiteEatFrom(self, x, y):
+        element = 0
+        inc = 1
+        # check if the piece at (x, y) can eat a black piece going right
+        while element == 0:
+            if(self.isCamp(x, y + inc) or y + inc == self.__size):
+                break
+            element = self.getValueAt(x, y + inc)
+            inc += 1
+        if element == 2 and (self.getValueAt(x, y + inc) == 1 or self.getValueAt(x, y + inc) == 3 or y + inc == self.__size):
+            return True
+        element = 0
+        # check if the piece at (x, y) can eat a black piece going left
+        inc = -1
+        while element == 0:
+            if(self.isCamp(x, y + inc) or y + inc == self.__size):
+                break
+            element = self.getValueAt(x, y + inc)
+            inc -= 1
+        if element == 2 and (self.getValueAt(x, y + inc) == 1 or self.getValueAt(x, y + inc) == 3 or y + inc == self.__size):
+            return True
+        # check if the piece at (x, y) can eat a black piece going down
+        inc = 1
+        while element == 0:
+            if(self.isCamp(x + inc, y) or x + inc == self.__size):
+                break
+            element = self.getValueAt(x + inc, y)
+            inc += 1
+        if element == 2 and (self.getValueAt(x + inc, y) == 1 or self.getValueAt(x + inc, y) == 3 or x + inc == self.__size):
+            return True
+        # check if the piece at (x, y) can eat a black piece going up
+        inc = -1
+        while element == 0:
+            if(self.isCamp(x + inc, y) or x + inc == self.__size):
+                break
+            element = self.getValueAt(x + inc, y)
+            inc -= 1
+        if element == 2 and (self.getValueAt(x + inc, y) == 1 or self.getValueAt(x + inc, y) == 3 or x + inc == self.__size):
+            return True
+        return False
+        
