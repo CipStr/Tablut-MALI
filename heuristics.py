@@ -110,10 +110,10 @@ def white_good_moves(board):
         x = white_pieces_x[i]
         y = white_pieces_y[i]
         # check if the piece can eat a black piece
-        if board.canWhiteEat(x, y):
+        if board.canWhiteEatFrom(x, y):
             score += 1
         # check if the piece can block a black piece
-        if board.canWhiteBlock(x, y):
+        if board.canWhiteBlockFrom(x, y):
             score += 0.75
     return score
 
