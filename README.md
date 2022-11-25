@@ -1,2 +1,2 @@
 # Tablut-MALI
-University project for FAI. It's a Tablut player that plays according to Ashton's rules.
+University project for Fundamentals for Artificial Intelligence. It's a Tablut player that plays according to Ashton's rules.
