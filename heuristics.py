@@ -11,7 +11,7 @@ def heuristic(board, score):
     move_score = score
     # check if the KING is surrounded by the opponent's pieces (not captured)
     if board.isKingSurrounded():
-        move_score += 100
+        move_score += 50
     # check if the KING is near the throne in the middle of the board
     if board.isKingNearThrone():
         move_score -= 50
@@ -32,7 +32,7 @@ def heuristic(board, score):
     # sum to move score the number of good moves for the BLACK
     move_score += black_good_moves(board)
     # subtract to move score the number of good moves for the WHITE
-    move_score -= white_good_moves(board)
+    move_score -= white_good_moves(board)*2
     return move_score
 
 
@@ -98,12 +98,23 @@ def black_good_moves(board):
 def white_good_moves(board):
     # return the number of good moves for the WHITE given the board state (see black_good_moves)
     # good moves for white:
-    # 1. try to move the king to the edge of the board
-    # 3. try to block or eat the black pieces
-    king = board.getKing()
-    king_x = king[0][0]
-    king_y = king[1][0]
-    weight_score = [0.5, 0.5, 0.5, 0.5]
-    # number of good moves for the king
-    pass
+    # 1. try to block or eat the black pieces
+    # get the white pieces
+    white_pieces = np.where(board == 1)
+    white_pieces_x = white_pieces[0]
+    white_pieces_y = white_pieces[1]
+    # for each white piece, check if it can eat or block a black piece
+    # if it can, add 1 to the score for kill 0.75 for block
+    score = 0
+    for i in range(len(white_pieces_x)):
+        x = white_pieces_x[i]
+        y = white_pieces_y[i]
+        # check if the piece can eat a black piece
+        if board.canWhiteEat(x, y):
+            score += 1
+        # check if the piece can block a black piece
+        if board.canWhiteBlock(x, y):
+            score += 0.75
+    return score
+
 
