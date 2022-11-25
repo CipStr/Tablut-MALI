@@ -39,6 +39,19 @@ class Board:
     # return the board as a string
     def __str__(self):
         return str(self.__board)
+    
+    def getNeighbours(self, x, y):
+        # return the neighbours of the piece at (x, y)
+        neighbours = []
+        if x > 0:
+            neighbours.append((x - 1, y))
+        if x < self.__size - 1:
+            neighbours.append((x + 1, y))
+        if y > 0:
+            neighbours.append((x, y - 1))
+        if y < self.__size - 1:
+            neighbours.append((x, y + 1))
+        return neighbours
 
     def isKingSurrounded(self):
         # check if the KING is surrounded by the opponent's pieces
@@ -51,6 +64,42 @@ class Board:
             return True
         else:
             return False
+    
+    def isKingOnThrone(self):
+        # check if the KING is on the throne
+        king = self.getKing()
+        return king[0][0] == self.getCenterCoordinate() and king[1][0] == self.getCenterCoordinate()
+    
+    def isKingNearCamp(self):
+        # check if the KING is near the camp
+        king = self.getKing()
+        neighbours = self.getNeighbours(king[0][0], king[1][0])
+        for neighbour in neighbours:
+            if self.isCamp(neighbour[0], neighbour[1]):
+                return True
+        return False
+            
+    def isCamp(self, x, y):
+        # check if the piece at (x, y) is a camp
+        centerCoor = self.getCenterCoordinate()
+        centerCoors = (centerCoor, centerCoor + 1, centerCoor - 1)
+        if((x == 0 and y in centerCoors) or (x == self.__size - 1 and y in centerCoors) or \
+            (y == 0 and x in centerCoors) or (y == self.__size - 1 and x in centerCoors)):
+            return True
+        if((x == 1 and y == centerCoor) or (x == self.__size - 2 and y == centerCoor) or \
+            (y == 1 and x == centerCoor) or (y == self.__size - 2 and x == centerCoor)):
+            return True
+        return False
+        
+
+    def nEnemiesCloseToKing(self):
+        # return the number of enemies close to the KING
+        closeToKing = (self.__board[self.getKing()[0][0] - 1][self.getKing()[1][0]], \
+            self.__board[self.getKing()[0][0] + 1][self.getKing()[1][0]], \
+            self.__board[self.getKing()[0][0]][self.getKing()[1][0] - 1], \
+            self.__board[self.getKing()[0][0]][self.getKing()[1][0] + 1])
+        # count the number of enemies close to the KING, where 2 represents a black piece
+        return closeToKing.count(2)
 
     def isKingNearThrone(self):
         # check if the KING is near the throne in the middle of the board
@@ -65,17 +114,27 @@ class Board:
     def isKingAtEdge(self):
         # check if the KING is at the edge of the board
         king = self.getKing()
-        return self.getKing()[0][0] == 0 or self.getKing()[0][0] == self.__size - 1 or \
-            self.getKing()[1][0] == 0 or self.getKing()[1][0] == self.__size - 1
+        size = self.__size
+        return king[0][0] == 0 or king[0][0] == size - 1 or \
+            king[1][0] == 0 or king[1][0] == size - 1
 
     def isKingCaptured(self):
         # check if the KING is captured
-        pass
+        if self.isKingOnThrone() and self.nEnemiesCloseToKing() == 4:
+            return True
+        elif self.isKingNearThrone() and self.nEnemiesCloseToKing() == 3:
+            return True
+        elif self.nEnemiesCloseToKing() == 2:
+            return True
+        elif self.isKingNearCamp() and self.nEnemiesCloseToKing() == 1:
+            return True
+        return False
 
+    #check if this works
     def getWhitePieces(self):
         # return the number of white pieces
-        pass
+        return self.getBoard().tolist().count(1)
 
     def getBlackPieces(self):
         # return the number of black pieces
-        pass
+        return self.getBoard().tolist().count(2)
