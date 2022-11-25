@@ -1,0 +1,28 @@
+# The engine represents the game algorithm. It is responsible for computing the game tree using the minimax algorithm.
+# After the game tree is computed, the engine will return it to pruning.py to be pruned using alpha-beta pruning.
+
+# The game state is a matrix of strings representing the board. Each string is either "BLACK", "WHITE", "KING",
+# or "EMPTY".
+
+# To use the engine we create a heuristic function that takes a game state and returns a value of how valuable a move
+# is. The lower the value, the better the move for WHITE. The higher the value, the better the move for BLACK.
+# The heuristic function is the following:
+#   - check KINGs surroundings, if the KING is in danger (surrounded by black pieces) we increase the score, if the
+#   KING is close to the throne (more protected from captures) we decrease the score.
+#   - check if the KING is at the edge of the board, if it is WHITE wins, and we set the score to -infinity.
+#   - check if the KING is captured, if it is BLACK wins, and we set the score to +infinity.
+#   - check the number of black pieces and white pieces on the board. We add and subtract the number of black and white
+#   pieces from the score respectively. If there are fewer black pieces, we lower the score, if there are fewer white
+#   pieces, we increase the score.
+
+# After we computed the heuristic function, we use the minimax algorithm to compute the game tree and recursively find
+# the best move for the current player. If we meet either of our base cases, we return the heuristic value of the game.
+# Base cases:
+#  - recursive depth limit reached
+#  - the game is over (there is winner based on board layout)
+# We start finding all the possible moves given the current game state.
+# For each move we make it and given a new game state we call the minimax function recursively. The recursive call
+# will return the heuristic value of the new game state. We then compare the heuristic value of the new game state
+# with the heuristic value of the current game state. If the recursive value is the best we've seen so far, we update
+# the best value and the best move.
+# After we've checked all the possible moves, we return the best move and the best value.
