@@ -64,7 +64,9 @@ class Board:
 
     def isKingAtEdge(self):
         # check if the KING is at the edge of the board
-        pass
+        king = self.getKing()
+        return self.getKing()[0][0] == 0 or self.getKing()[0][0] == self.__size - 1 or \
+            self.getKing()[1][0] == 0 or self.getKing()[1][0] == self.__size - 1
 
     def isKingCaptured(self):
         # check if the KING is captured
