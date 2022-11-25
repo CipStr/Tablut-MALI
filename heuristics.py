@@ -77,15 +77,17 @@ def black_good_moves(board):
     else:
         weight_score = [0.5, 0.5, 0.5, 0.5]
     # get the black pieces for each quadrant
-    black_pieces = np.where(board == 2)
+    black_pieces = np.where(board.getBoard() == 2)
     black_pieces_x = black_pieces[0]
     black_pieces_y = black_pieces[1]
-    top_right_pieces = len(np.where(black_pieces_x < board.getCenterCoordinate() < black_pieces_y))
-    top_left_pieces = len(np.where(black_pieces_x < board.getCenterCoordinate() and
-                                   black_pieces_y < board.getCenterCoordinate()))
-    bottom_right_pieces = len(np.where(black_pieces_x > board.getCenterCoordinate() and
-                                       black_pieces_y > board.getCenterCoordinate()))
-    bottom_left_pieces = len(np.where(black_pieces_x > board.getCenterCoordinate() > black_pieces_y))
+    tmp = black_pieces_y[black_pieces_x <= board.getCenterCoordinate()]
+    top_right_pieces = len(tmp[tmp >= board.getCenterCoordinate()])
+    tmp = black_pieces_y[black_pieces_x <= board.getCenterCoordinate()]
+    top_left_pieces = len(tmp[tmp <= board.getCenterCoordinate()])
+    tmp = black_pieces_y[black_pieces_x >= board.getCenterCoordinate()]
+    bottom_right_pieces = len(tmp[tmp >= board.getCenterCoordinate()])
+    tmp = black_pieces_y[black_pieces_x >= board.getCenterCoordinate()]
+    bottom_left_pieces = len(tmp[tmp <= board.getCenterCoordinate()])
     # multiply the number of black pieces in each quadrant by the weight score
     top_right_score = top_right_pieces * weight_score[0]
     top_left_score = top_left_pieces * weight_score[1]
@@ -100,7 +102,7 @@ def white_good_moves(board):
     # good moves for white:
     # 1. try to block or eat the black pieces
     # get the white pieces
-    white_pieces = np.where(board == 1)
+    white_pieces = np.where(board.getBoard() == 1)
     white_pieces_x = white_pieces[0]
     white_pieces_y = white_pieces[1]
     # for each white piece, check if it can eat or block a black piece

@@ -5,22 +5,30 @@ import numpy as np
 
 class Board:
 
-    def __init__(self, string_matrix):
-        # need to convert the string matrix to a 2D numpy array where each element is an integer
-        # where 0 represents an empty space, 1 represents a white piece, 2 represents a black piece, and 3 represents
-        # the king
+    def __init__(self):
         self.__size = 9
+        # initialize the board
         self.__board = np.zeros((self.__size, self.__size), dtype=int)
-        # convert the string values to the corresponding integer values
-        for i in range(self.__size):
-            for j in range(self.__size):
-                # matrix initialized as zeros, so case "EMPTY" is not needed
-                if string_matrix[i][j] == 'WHITE':
-                    self.__board[i][j] = 1
-                elif string_matrix[i][j] == 'BLACK':
-                    self.__board[i][j] = 2
-                elif string_matrix[i][j] == 'KING':
-                    self.__board[i][j] = 3
+        # set the throne
+        self.__board[self.getCenterCoordinate()][self.getCenterCoordinate()] = 3
+        # set white pieces (in a cross shape around the throne)
+        for i in range(self.getCenterCoordinate()-2,self.getCenterCoordinate()):
+            self.__board[i][self.getCenterCoordinate()] = 1
+            self.__board[self.getCenterCoordinate()][i] = 1
+        for i in range(self.getCenterCoordinate()+1,self.getCenterCoordinate()+3):
+            self.__board[i][self.getCenterCoordinate()] = 1
+            self.__board[self.getCenterCoordinate()][i] = 1
+        # set black pieces ( in the camps)
+        for i in range(self.getCenterCoordinate()-1, self.getCenterCoordinate()+2):
+            self.__board[i][0] = 2
+            self.__board[i][self.__size-1] = 2
+            self.__board[0][i] = 2
+            self.__board[self.__size-1][i] = 2
+        # set the last black pieces
+        self.__board[self.getCenterCoordinate()][1] = 2
+        self.__board[self.getCenterCoordinate()][self.__size-2] = 2
+        self.__board[1][self.getCenterCoordinate()] = 2
+        self.__board[self.__size-2][self.getCenterCoordinate()] = 2
         # the score of the board
         self.__score = 0
 
@@ -142,10 +150,11 @@ class Board:
         return self.getBoard().tolist().count(2)
 
     # given a board, return all the possible moves for the player
-    def generateMoves(self, board, player):
+    def generateMoves(self, board_class, player):
         # moves are in format "xy_xnewynew"
         moves = []
-        if player == "WHITE":
+        board = board_class.getBoard()
+        if player == "white":
             # get the position of all the white pieces
             whitePieces = np.where(board == 1)
             for i in range(len(whitePieces[0])):
@@ -161,7 +170,7 @@ class Board:
                     moves.append(str(x) + str(y) + "_" + str(x) + str(y - 1))
                 if y < self.__size - 1 and board[x][y + 1] == 0 and not self.isCamp(x, y + 1) and not self.isCenter(x, y + 1):
                     moves.append(str(x) + str(y) + "_" + str(x) + str(y + 1))
-        elif player == "BLACK":
+        elif player == "black":
             # get the position of all the black pieces
             blackPieces = np.where(board == 2)
             for i in range(len(blackPieces[0])):
@@ -294,3 +303,18 @@ class Board:
         newBoard[x2][y2] = newBoard[x1][y1]
         newBoard[x1][y1] = 0
         return newBoard
+
+    def convertBoard(self, board):
+        # convert the board to a 2D array
+        self.__board = np.zeros((self.__size, self.__size), dtype=int)
+        for i in range(self.__size):
+            for j in range(self.__size):
+                if board[i][j] == "W":
+                    self.__board[i][j] = 1
+                elif board[i][j] == "B":
+                    self.__board[i][j] = 2
+                elif board[i][j] == "K":
+                    self.__board[i][j] = 3
+
+    def setBoard(self, board):
+        self.__board = board
