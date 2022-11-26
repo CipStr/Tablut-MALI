@@ -20,7 +20,6 @@ def minimax(board, depth, player, alpha, beta, preceding_moves):
         best_move = None
         # generate all the possible moves for the WHITE
         moves = board_class.generateMoves(board, player)
-        #print("Black moves: ", moves)
         # for each move, generate the new board and call the minimax algorithm recursively
         for move in moves:
             new_board = Board.Board()
@@ -44,7 +43,6 @@ def minimax(board, depth, player, alpha, beta, preceding_moves):
         best_move = None
         # generate all the possible moves for the BLACK
         moves = board_class.generateMoves(board, player)
-        #print("White moves: ", moves)
         # for each move, generate the new board and call the minimax algorithm recursively
         for move in moves:
             new_board = Board.Board()

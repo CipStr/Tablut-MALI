@@ -2,6 +2,7 @@ import connect2server as cns
 import Board
 import tree
 import numpy as np
+import sys
 
 
 # create Player class
@@ -38,5 +39,6 @@ class Player:
         return converted_move
 
 
-player = Player("Luca", "black")
+# color = sys.argv[1]
+player = Player("Luca", "white")
 cns.connect_to_server(player)

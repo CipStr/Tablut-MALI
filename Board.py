@@ -12,23 +12,23 @@ class Board:
         # set the throne
         self.__board[self.getCenterCoordinate()][self.getCenterCoordinate()] = 3
         # set white pieces (in a cross shape around the throne)
-        for i in range(self.getCenterCoordinate()-2,self.getCenterCoordinate()):
+        for i in range(self.getCenterCoordinate() - 2, self.getCenterCoordinate()):
             self.__board[i][self.getCenterCoordinate()] = 1
             self.__board[self.getCenterCoordinate()][i] = 1
-        for i in range(self.getCenterCoordinate()+1,self.getCenterCoordinate()+3):
+        for i in range(self.getCenterCoordinate() + 1, self.getCenterCoordinate() + 3):
             self.__board[i][self.getCenterCoordinate()] = 1
             self.__board[self.getCenterCoordinate()][i] = 1
         # set black pieces ( in the camps)
-        for i in range(self.getCenterCoordinate()-1, self.getCenterCoordinate()+2):
+        for i in range(self.getCenterCoordinate() - 1, self.getCenterCoordinate() + 2):
             self.__board[i][0] = 2
-            self.__board[i][self.__size-1] = 2
+            self.__board[i][self.__size - 1] = 2
             self.__board[0][i] = 2
-            self.__board[self.__size-1][i] = 2
+            self.__board[self.__size - 1][i] = 2
         # set the last black pieces
         self.__board[self.getCenterCoordinate()][1] = 2
-        self.__board[self.getCenterCoordinate()][self.__size-2] = 2
+        self.__board[self.getCenterCoordinate()][self.__size - 2] = 2
         self.__board[1][self.getCenterCoordinate()] = 2
-        self.__board[self.__size-2][self.getCenterCoordinate()] = 2
+        self.__board[self.__size - 2][self.getCenterCoordinate()] = 2
         # the score of the board
         self.__score = 0
 
@@ -103,6 +103,12 @@ class Board:
         return x == self.getCenterCoordinate() and y == self.getCenterCoordinate()
 
     def nEnemiesCloseToKing(self):
+        # if king is on the edge of the board
+        king = self.getKing()
+        king_x = king[0][0]
+        king_y = king[1][0]
+        if king_x == 0 or king_x == self.__size - 1 or king_y == 0 or king_y == self.__size - 1:
+            return 0
         # return the number of enemies close to the KING
         closeToKing = (self.__board[self.getKing()[0][0] - 1][self.getKing()[1][0]],
                        self.__board[self.getKing()[0][0] + 1][self.getKing()[1][0]],
@@ -126,7 +132,7 @@ class Board:
         king = self.getKing()
         size = self.__size
         return king[0][0] == 0 or king[0][0] == size - 1 or \
-            king[1][0] == 0 or king[1][0] == size - 1
+               king[1][0] == 0 or king[1][0] == size - 1
 
     def isKingCaptured(self):
         # check if the KING is captured
@@ -154,8 +160,9 @@ class Board:
         # moves are in format "xy_xnewynew"
         moves = []
         if player == "white":
-            # get the position of all the white pieces
+            # get the position of all the white pieces + the king
             whitePieces = np.where(board == 1)
+            king = np.where(board == 3)
             for i in range(len(whitePieces[0])):
                 x = whitePieces[0][i]
                 y = whitePieces[1][i]
@@ -164,7 +171,9 @@ class Board:
                 # array of flags to check if the piece can move in a certain direction
                 flags = [True, True, True, True]
                 while j < self.__size:
-                    if x - j >= 0 and board[x - j][y] == 0 and not self.isCamp(x - j, y) and not self.isCenter(x - j, y) and flags[0]:
+                    if x - j >= 0 and board[x - j][y] == 0 and not self.isCamp(x - j, y) and not self.isCenter(x - j,
+                                                                                                               y) and \
+                            flags[0]:
                         moves.append(str(x) + str(y) + "_" + str(x - j) + str(y))
                     else:
                         flags[0] = False
@@ -178,8 +187,55 @@ class Board:
                         moves.append(str(x) + str(y) + "_" + str(x) + str(y - j))
                     else:
                         flags[2] = False
-                    if y + j < self.__size and board[x][y + j] == 0 and not self.isCamp(x, y + j) and not self.isCenter(x, y + j)\
+                    if y + j < self.__size and board[x][y + j] == 0 and not self.isCamp(x, y + j) and not self.isCenter(
+                            x, y + j) \
                             and flags[3]:
+                        moves.append(str(x) + str(y) + "_" + str(x) + str(y + j))
+                    else:
+                        flags[3] = False
+                    j += 1
+            # check the king's moves
+            x = king[0][0]
+            y = king[1][0]
+            j = 1
+            flags = [True, True, True, True]
+            while j < self.__size:
+                if self.getCenterCoordinate() != x or self.getCenterCoordinate() != y:
+                    if x - j >= 0 and board[x - j][y] == 0 and not self.isCamp(x - j, y) and not self.isCenter(x - j, y) and flags[0]:
+                        moves.append(str(x) + str(y) + "_" + str(x - j) + str(y))
+                    else:
+                        flags[0] = False
+                    if x + j < self.__size and board[x + j][y] == 0 and not self.isCamp(x + j, y) and flags[1] \
+                            and not self.isCenter(x + j, y):
+                        moves.append(str(x) + str(y) + "_" + str(x + j) + str(y))
+                    else:
+                        flags[1] = False
+                    if y - j >= 0 and board[x][y - j] == 0 and not self.isCamp(x, y - j) and flags[2] \
+                            and not self.isCenter(x, y - j):
+                        moves.append(str(x) + str(y) + "_" + str(x) + str(y - j))
+                    else:
+                        flags[2] = False
+                    if y + j < self.__size and board[x][y + j] == 0 and not self.isCamp(x, y + j) and flags[3] \
+                            and not self.isCenter(x, y + j):
+                        moves.append(str(x) + str(y) + "_" + str(x) + str(y + j))
+                    else:
+                        flags[3] = False
+                    j += 1
+                else:
+                    # cases in which the king is in the castle:
+                    if x - j >= 0 and board[x - j][y] == 0 and not self.isCamp(x - j, y) and flags[0]:
+                        moves.append(str(x) + str(y) + "_" + str(x - j) + str(y))
+                    else:
+                        flags[0] = False
+                    if x + j < self.__size and board[x + j][y] == 0 and not self.isCamp(x + j, y) and flags[1]:
+                        moves.append(str(x) + str(y) + "_" + str(x + j) + str(y))
+                    else:
+                        flags[1] = False
+                    if y - j >= 0 and board[x][y - j] == 0 and not self.isCamp(x, y - j) and flags[2]:
+                        moves.append(str(x) + str(y) + "_" + str(x) + str(y - j))
+                    else:
+                        flags[2] = False
+                    if y + j < self.__size and board[x][y + j] == 0 and not self.isCamp(x, y + j) and flags[3]:
                         moves.append(str(x) + str(y) + "_" + str(x) + str(y + j))
                     else:
                         flags[3] = False
@@ -209,29 +265,32 @@ class Board:
                         moves.append(str(x) + str(y) + "_" + str(x) + str(y - j))
                     else:
                         flags[2] = False
-                    if y + j < self.__size and board[x][y + j] == 0 and not self.isCamp(x, y + j) and not self.isCenter(x, y + j) \
+                    if y + j < self.__size and board[x][y + j] == 0 and not self.isCamp(x, y + j) and not self.isCenter(
+                            x, y + j) \
                             and flags[3]:
                         moves.append(str(x) + str(y) + "_" + str(x) + str(y + j))
                     else:
                         flags[3] = False
                     # check every possible move for the black piece, black pieces can move in a camp until they leave it
-                    if x - j >= 0 and board[x - j][y] == 0 and self.isCamp(x, y) and self.isCamp(x - j, y) and not self.isCenter(
-                        x - j, y) and flags[4]:
+                    if x - j >= 0 and board[x - j][y] == 0 and self.isCamp(x, y) and self.isCamp(x - j,
+                                                                                                 y) and not self.isCenter(
+                            x - j, y) and flags[4]:
                         moves.append(str(x) + str(y) + "_" + str(x - j) + str(y))
                     else:
                         flags[4] = False
-                    if x + j < self.__size and board[x + j][y] == 0 and self.isCamp(x, y) and  \
-                        self.isCamp(x + j,y) and not self.isCenter(x + j, y) and flags[5]:
+                    if x + j < self.__size and board[x + j][y] == 0 and self.isCamp(x, y) and \
+                            self.isCamp(x + j, y) and not self.isCenter(x + j, y) and flags[5]:
                         moves.append(str(x) + str(y) + "_" + str(x + j) + str(y))
                     else:
                         flags[5] = False
-                    if y - j >= 0 and board[x][y - j] == 0 and self.isCamp(x, y) and self.isCamp(x, y - j) and not self.isCenter(
-                        x, y - j) and flags[6]:
+                    if y - j >= 0 and board[x][y - j] == 0 and self.isCamp(x, y) and self.isCamp(x,
+                                                                                                 y - j) and not self.isCenter(
+                            x, y - j) and flags[6]:
                         moves.append(str(x) + str(y) + "_" + str(x) + str(y - j))
                     else:
                         flags[6] = False
-                    if y + j < self.__size and board[x][y + 1] == 0 and self.isCamp(x, y) and  \
-                        self.isCamp(x,y + j) and not self.isCenter(x, y + j) and flags[7]:
+                    if y + j < self.__size and board[x][y + 1] == 0 and self.isCamp(x, y) and \
+                            self.isCamp(x, y + j) and not self.isCenter(x, y + j) and flags[7]:
                         moves.append(str(x) + str(y) + "_" + str(x) + str(y + j))
                     else:
                         flags[7] = False
@@ -252,7 +311,8 @@ class Board:
             element = self.getValueAt(x, y + inc)
             inc += 1
         if element == 2 and (
-                y + inc == self.__size or self.getValueAt(x, y + inc) == 1 or self.getValueAt(x, y + inc) == 3):
+                y + inc == self.__size or self.getValueAt(x, y + inc) == 1 or self.getValueAt(x, y + inc) == 3) or \
+                self.isCamp(x, y + inc) or self.isCenter(x, y + inc):
             return True
         element = 0
         # check if the piece at (x, y) can eat a black piece going left
@@ -263,7 +323,8 @@ class Board:
             element = self.getValueAt(x, y + inc)
             inc -= 1
         if element == 2 and (
-                y + inc == self.__size or self.getValueAt(x, y + inc) == 1 or self.getValueAt(x, y + inc) == 3):
+                y + inc == self.__size or self.getValueAt(x, y + inc) == 1 or self.getValueAt(x, y + inc) == 3) or \
+                self.isCamp(x, y + inc) or self.isCenter(x, y + inc):
             return True
         # check if the piece at (x, y) can eat a black piece going down
         inc = 1
@@ -273,7 +334,8 @@ class Board:
             element = self.getValueAt(x + inc, y)
             inc += 1
         if element == 2 and (
-                x + inc == self.__size or self.getValueAt(x + inc, y) == 1 or self.getValueAt(x + inc, y) == 3):
+                x + inc == self.__size or self.getValueAt(x + inc, y) == 1 or self.getValueAt(x + inc, y) == 3) or \
+                self.isCamp(x + inc, y) or self.isCenter(x + inc, y):
             return True
         # check if the piece at (x, y) can eat a black piece going up
         inc = -1
@@ -283,7 +345,8 @@ class Board:
             element = self.getValueAt(x + inc, y)
             inc -= 1
         if element == 2 and (
-                x + inc == self.__size or self.getValueAt(x + inc, y) == 1 or self.getValueAt(x + inc, y) == 3):
+                x + inc == self.__size or self.getValueAt(x + inc, y) == 1 or self.getValueAt(x + inc, y) == 3) or \
+                self.isCamp(x + inc, y) or self.isCenter(x + inc, y):
             return True
         return False
 

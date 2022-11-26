@@ -50,7 +50,10 @@ def connect_to_server(player):
         # send player's name to the server
         sock.send(struct.pack('>i', len(player.name)))
         sock.send(player.name.encode())
-        state = receive_current_state(sock)
+        if player.color == 'white':
+            state = "start game"
+        else:
+            state = receive_current_state(sock)
         while True:
             new_state = receive_current_state(sock)
             print("Current state")

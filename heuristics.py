@@ -11,24 +11,23 @@ def heuristic(board, score):
     move_score = score
     # check if the KING is surrounded by the opponent's pieces (not captured)
     if board.isKingSurrounded():
-        move_score += 50*board.nEnemiesCloseToKing()
+        move_score += 75*board.nEnemiesCloseToKing()
     # check if the KING is near the throne in the middle of the board
     if board.isKingNearThrone():
         move_score -= 50
     # check if the KING is at the edge of the board (WHITE wins)
     if board.isKingAtEdge():
-        move_score -= 1000
+        move_score -= 10000
     # check if the KING is captured (BLACK wins)
     if board.isKingCaptured():
-        move_score += 1000
+        move_score += 10000
     # check if the WHITE has more pieces than the BLACK
     if board.getWhitePieces() > board.getBlackPieces():
-        move_score -= 1 * (
-                    board.getWhitePieces() - board.getBlackPieces()) * 2  # multiply by 2 because the BLACK has in the
+        move_score -= (board.getWhitePieces() - board.getBlackPieces()) * 2  # multiply by 2 because the BLACK has in the
         # beginning of the game double the number of pieces than the WHITE
     # check if the BLACK has more pieces than the WHITE
     if board.getWhitePieces() < board.getBlackPieces():
-        move_score += 1 * (board.getBlackPieces() - board.getWhitePieces())
+        move_score += (board.getBlackPieces() - board.getWhitePieces())
     # sum to move score the number of good moves for the BLACK
     move_score += black_good_moves(board)
     # subtract to move score the number of good moves for the WHITE
