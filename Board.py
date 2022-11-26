@@ -160,46 +160,82 @@ class Board:
                 x = whitePieces[0][i]
                 y = whitePieces[1][i]
                 # check every possible move for the white piece
-                if x > 0 and board[x - 1][y] == 0 and not self.isCamp(x - 1, y) and not self.isCenter(x - 1, y):
-                    moves.append(str(x) + str(y) + "_" + str(x - 1) + str(y))
-                if x < self.__size - 1 and board[x + 1][y] == 0 and not self.isCamp(x + 1, y) and not self.isCenter(
-                        x + 1, y):
-                    moves.append(str(x) + str(y) + "_" + str(x + 1) + str(y))
-                if y > 0 and board[x][y - 1] == 0 and not self.isCamp(x, y - 1) and not self.isCenter(x, y - 1):
-                    moves.append(str(x) + str(y) + "_" + str(x) + str(y - 1))
-                if y < self.__size - 1 and board[x][y + 1] == 0 and not self.isCamp(x, y + 1) and not self.isCenter(x, y + 1):
-                    moves.append(str(x) + str(y) + "_" + str(x) + str(y + 1))
+                j = 1
+                # array of flags to check if the piece can move in a certain direction
+                flags = [True, True, True, True]
+                while j < self.__size:
+                    if x - j >= 0 and board[x - j][y] == 0 and not self.isCamp(x - j, y) and not self.isCenter(x - j, y) and flags[0]:
+                        moves.append(str(x) + str(y) + "_" + str(x - j) + str(y))
+                    else:
+                        flags[0] = False
+                    if x + j < self.__size and board[x + j][y] == 0 and not self.isCamp(x + j, y) and \
+                            not self.isCenter(x + j, y) and flags[1]:
+                        moves.append(str(x) + str(y) + "_" + str(x + j) + str(y))
+                    else:
+                        flags[1] = False
+                    if y - j >= 0 and board[x][y - j] == 0 and not self.isCamp(x, y - j) and not self.isCenter(x, y - j) \
+                            and flags[2]:
+                        moves.append(str(x) + str(y) + "_" + str(x) + str(y - j))
+                    else:
+                        flags[2] = False
+                    if y + j < self.__size and board[x][y + j] == 0 and not self.isCamp(x, y + j) and not self.isCenter(x, y + j)\
+                            and flags[3]:
+                        moves.append(str(x) + str(y) + "_" + str(x) + str(y + j))
+                    else:
+                        flags[3] = False
+                    j += 1
         elif player == "black":
             # get the position of all the black pieces
             blackPieces = np.where(board == 2)
             for i in range(len(blackPieces[0])):
                 x = blackPieces[0][i]
                 y = blackPieces[1][i]
-                # check every possible move for the black piece, black pieces can move in a camp until they leave it
-                if x > 0 and board[x - 1][y] == 0 and self.isCamp(x, y) and self.isCamp(x - 1, y) and not self.isCenter(
-                        x - 1, y):
-                    moves.append(str(x) + str(y) + "_" + str(x - 1) + str(y))
-                if x < self.__size - 1 and board[x + 1][y] == 0 and self.isCamp(x, y) and self.isCamp(x + 1,
-                                                                                                      y) and not self.isCenter(
-                    x + 1, y):
-                    moves.append(str(x) + str(y) + "_" + str(x + 1) + str(y))
-                if y > 0 and board[x][y - 1] == 0 and self.isCamp(x, y) and self.isCamp(x, y - 1) and not self.isCenter(
-                        x, y - 1):
-                    moves.append(str(x) + str(y) + "_" + str(x) + str(y - 1))
-                if y < self.__size - 1 and board[x][y + 1] == 0 and self.isCamp(x, y) and self.isCamp(x,
-                                                                                                      y + 1) and not self.isCenter(
-                    x, y + 1):
-                    moves.append(str(x) + str(y) + "_" + str(x) + str(y + 1))
-                if x > 0 and board[x - 1][y] == 0 and not self.isCamp(x - 1, y) and not self.isCenter(x - 1, y):
-                    moves.append(str(x) + str(y) + "_" + str(x - 1) + str(y))
-                if x < self.__size - 1 and board[x + 1][y] == 0 and not self.isCamp(x + 1, y) and not self.isCenter(
-                        x + 1, y):
-                    moves.append(str(x) + str(y) + "_" + str(x + 1) + str(y))
-                if y > 0 and board[x][y - 1] == 0 and not self.isCamp(x, y - 1) and not self.isCenter(x, y - 1):
-                    moves.append(str(x) + str(y) + "_" + str(x) + str(y - 1))
-                if y < self.__size - 1 and board[x][y + 1] == 0 and not self.isCamp(x, y + 1) and not self.isCenter(x,
-                                                                                                                    y + 1):
-                    moves.append(str(x) + str(y) + "_" + str(x) + str(y + 1))
+                j = 1
+                # array of flags to check if the piece can move in a certain direction
+                flags = [True, True, True, True, True, True, True, True]
+                while j < self.__size:
+                    if x - j >= 0 and board[x - j][y] == 0 and not self.isCamp(x - j, y) and not self.isCenter(x - j, y) \
+                            and flags[0]:
+                        moves.append(str(x) + str(y) + "_" + str(x - j) + str(y))
+                    else:
+                        flags[0] = False
+                    if x + j < self.__size and board[x + j][y] == 0 and not self.isCamp(x + j, y) and \
+                            not self.isCenter(x + j, y) and flags[1]:
+                        moves.append(str(x) + str(y) + "_" + str(x + j) + str(y))
+                    else:
+                        flags[1] = False
+                    if y - j >= 0 and board[x][y - j] == 0 and not self.isCamp(x, y - j) and not self.isCenter(x, y - j) \
+                            and flags[2]:
+                        moves.append(str(x) + str(y) + "_" + str(x) + str(y - j))
+                    else:
+                        flags[2] = False
+                    if y + j < self.__size and board[x][y + j] == 0 and not self.isCamp(x, y + j) and not self.isCenter(x, y + j) \
+                            and flags[3]:
+                        moves.append(str(x) + str(y) + "_" + str(x) + str(y + j))
+                    else:
+                        flags[3] = False
+                    # check every possible move for the black piece, black pieces can move in a camp until they leave it
+                    if x - j >= 0 and board[x - j][y] == 0 and self.isCamp(x, y) and self.isCamp(x - j, y) and not self.isCenter(
+                        x - j, y) and flags[4]:
+                        moves.append(str(x) + str(y) + "_" + str(x - j) + str(y))
+                    else:
+                        flags[4] = False
+                    if x + j < self.__size and board[x + j][y] == 0 and self.isCamp(x, y) and  \
+                        self.isCamp(x + j,y) and not self.isCenter(x + j, y) and flags[5]:
+                        moves.append(str(x) + str(y) + "_" + str(x + j) + str(y))
+                    else:
+                        flags[5] = False
+                    if y - j >= 0 and board[x][y - j] == 0 and self.isCamp(x, y) and self.isCamp(x, y - j) and not self.isCenter(
+                        x, y - j) and flags[6]:
+                        moves.append(str(x) + str(y) + "_" + str(x) + str(y - j))
+                    else:
+                        flags[6] = False
+                    if y + j < self.__size and board[x][y + 1] == 0 and self.isCamp(x, y) and  \
+                        self.isCamp(x,y + j) and not self.isCenter(x, y + j) and flags[7]:
+                        moves.append(str(x) + str(y) + "_" + str(x) + str(y + j))
+                    else:
+                        flags[7] = False
+                    j += 1
         return moves
 
     def getValueAt(self, x, y):
