@@ -24,7 +24,7 @@ class Player:
         y1 = move[1]
         x2 = move[3]
         y2 = move[4]
-        converted_move = [chr(int(x1) + 97) + str(int(y1) + 1), chr(int(x2) + 97) + str(int(y2) + 1)]
+        converted_move = [chr(int(y1) + 97) + str(int(x1) + 1), chr(int(y2) + 97) + str(int(x2) + 1)]
         print(converted_move)
         return converted_move
 

@@ -55,13 +55,14 @@ def connect_to_server(player):
             new_state = receive_current_state(sock)
             print("Current state")
             print(new_state)
-            move = mv.Move("e3", "d3", player.color)
             if new_state != state:
-                state = new_state
                 # receive move from the player
-                move_list = player.play(state)
+                move_list = player.play(new_state)
                 move = mv.Move(move_list[0], move_list[1], player.color)
+                move_for_server = convert_move_to_json_for_server(move)  # convert_move_for_server(move, color)
+                sock.send(struct.pack('>i', len(move_for_server)))
+                sock.send(move_for_server.encode())
+                state = receive_current_state(sock)
 
-            move_for_server = convert_move_to_json_for_server(move)  # convert_move_for_server(move, color)
-            sock.send(struct.pack('>i', len(move_for_server)))
-            sock.send(move_for_server.encode())
+
+
