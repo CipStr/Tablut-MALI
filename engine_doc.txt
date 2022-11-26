@@ -25,4 +25,4 @@
 # will return the heuristic value of the new game state. We then compare the heuristic value of the new game state
 # with the heuristic value of the current game state. If the recursive value is the best we've seen so far, we update
 # the best value and the best move.
-# After we've checked all the possible moves, we return the best move and the best value.
+# After we've checked all the possible moves, we return the best move and the best value.s

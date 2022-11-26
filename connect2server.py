@@ -65,7 +65,3 @@ def connect_to_server(player):
             move_for_server = convert_move_to_json_for_server(move)  # convert_move_for_server(move, color)
             sock.send(struct.pack('>i', len(move_for_server)))
             sock.send(move_for_server.encode())
-
-            state = receive_current_state(sock)
-            print("Current state")
-            print(state)

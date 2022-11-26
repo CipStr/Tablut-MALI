@@ -150,10 +150,9 @@ class Board:
         return self.getBoard().tolist().count(2)
 
     # given a board, return all the possible moves for the player
-    def generateMoves(self, board_class, player):
+    def generateMoves(self, board, player):
         # moves are in format "xy_xnewynew"
         moves = []
-        board = board_class.getBoard()
         if player == "white":
             # get the position of all the white pieces
             whitePieces = np.where(board == 1)
@@ -217,7 +216,7 @@ class Board:
             element = self.getValueAt(x, y + inc)
             inc += 1
         if element == 2 and (
-                self.getValueAt(x, y + inc) == 1 or self.getValueAt(x, y + inc) == 3 or y + inc == self.__size):
+                y + inc == self.__size or self.getValueAt(x, y + inc) == 1 or self.getValueAt(x, y + inc) == 3):
             return True
         element = 0
         # check if the piece at (x, y) can eat a black piece going left
@@ -228,7 +227,7 @@ class Board:
             element = self.getValueAt(x, y + inc)
             inc -= 1
         if element == 2 and (
-                self.getValueAt(x, y + inc) == 1 or self.getValueAt(x, y + inc) == 3 or y + inc == self.__size):
+                y + inc == self.__size or self.getValueAt(x, y + inc) == 1 or self.getValueAt(x, y + inc) == 3):
             return True
         # check if the piece at (x, y) can eat a black piece going down
         inc = 1
@@ -238,7 +237,7 @@ class Board:
             element = self.getValueAt(x + inc, y)
             inc += 1
         if element == 2 and (
-                self.getValueAt(x + inc, y) == 1 or self.getValueAt(x + inc, y) == 3 or x + inc == self.__size):
+                x + inc == self.__size or self.getValueAt(x + inc, y) == 1 or self.getValueAt(x + inc, y) == 3):
             return True
         # check if the piece at (x, y) can eat a black piece going up
         inc = -1
@@ -248,7 +247,7 @@ class Board:
             element = self.getValueAt(x + inc, y)
             inc -= 1
         if element == 2 and (
-                self.getValueAt(x + inc, y) == 1 or self.getValueAt(x + inc, y) == 3 or x + inc == self.__size):
+                x + inc == self.__size or self.getValueAt(x + inc, y) == 1 or self.getValueAt(x + inc, y) == 3):
             return True
         return False
 
@@ -257,7 +256,7 @@ class Board:
         inc = 1
         # check if the piece at (x, y) can eat a black piece going right
         while element == 0:
-            if self.isCamp(x, y + inc) or y + inc == self.__size:
+            if y + inc == self.__size or self.isCamp(x, y + inc):
                 break
             element = self.getValueAt(x, y + inc)
             inc += 1
@@ -267,7 +266,7 @@ class Board:
         # check if the piece at (x, y) can eat a black piece going left
         inc = -1
         while element == 0:
-            if self.isCamp(x, y + inc) or y + inc == self.__size:
+            if y + inc == self.__size or self.isCamp(x, y + inc):
                 break
             element = self.getValueAt(x, y + inc)
             inc -= 1
@@ -276,7 +275,7 @@ class Board:
         # check if the piece at (x, y) can eat a black piece going down
         inc = 1
         while element == 0:
-            if self.isCamp(x + inc, y) or x + inc == self.__size:
+            if x + inc == self.__size or self.isCamp(x + inc, y):
                 break
             element = self.getValueAt(x + inc, y)
             inc += 1
@@ -285,7 +284,7 @@ class Board:
         # check if the piece at (x, y) can eat a black piece going up
         inc = -1
         while element == 0:
-            if self.isCamp(x + inc, y) or x + inc == self.__size:
+            if x + inc == self.__size or self.isCamp(x + inc, y):
                 break
             element = self.getValueAt(x + inc, y)
             inc -= 1
@@ -309,11 +308,11 @@ class Board:
         self.__board = np.zeros((self.__size, self.__size), dtype=int)
         for i in range(self.__size):
             for j in range(self.__size):
-                if board[i][j] == "W":
+                if board[i][j] == "WHITE":
                     self.__board[i][j] = 1
-                elif board[i][j] == "B":
+                elif board[i][j] == "BLACK":
                     self.__board[i][j] = 2
-                elif board[i][j] == "K":
+                elif board[i][j] == "KING":
                     self.__board[i][j] = 3
 
     def setBoard(self, board):
