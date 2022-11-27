@@ -29,10 +29,14 @@ TODO: improve heuristics (Tablut is a complex game and this approach is heavy on
 
 ## Special thanks to: 
 Every collaborator. Good guys.
+
+
 But also to this bidoof:
+![bidoof](https://user-images.githubusercontent.com/73821482/204161755-88f8c931-e1bf-41ca-8953-8351ed3b7762.jpg)
 
 
 He helped us smile when we couldn't. 
+
 
 
 
