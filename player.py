@@ -61,5 +61,5 @@ color = sys.argv[1]
 timeout = sys.argv[2]
 server_ip = sys.argv[3]
 timer = Timer(timeout)
-player = Player("Luca", color, server_ip, timer)
+player = Player("Luca", color.lower(), server_ip, timer)
 cns.connect_to_server(player)
