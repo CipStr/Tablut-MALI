@@ -191,7 +191,7 @@ class Board:
     def generateMoves(self, board, player):
         # moves are in format "xy_xnewynew"
         moves = []
-        if player == "white":
+        if player.lower() == "white":
             # get the position of all the white pieces + the king
             whitePieces = np.where(board == 1)
             king = np.where(board == 3)
@@ -274,7 +274,7 @@ class Board:
                     else:
                         flags[3] = False
                     j += 1
-        elif player == "black":
+        elif player.lower() == "black":
             # get the position of all the black pieces
             blackPieces = np.where(board == 2)
             for i in range(len(blackPieces[0])):
