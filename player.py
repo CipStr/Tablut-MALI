@@ -19,7 +19,7 @@ class Player:
         self.board.convertBoard(current_state)
         print("Current state", self.board.getBoard())
         # generate the tree
-        minEval, move = tree.minimax(self.board.getBoard(), 3, self.color, -np.inf, np.inf, self.move)
+        minEval, move = tree.minimax(self.board.getBoard(), 2, self.color, -np.inf, np.inf, self.move)
         # convert the move to the format accepted by the server (rows from a-h and columns from 1-9)
         print(move)
         print(self.move)
@@ -39,6 +39,6 @@ class Player:
         return converted_move
 
 
-# color = sys.argv[1]
-player = Player("Luca", "white")
+color = sys.argv[1]
+player = Player("Luca", color)
 cns.connect_to_server(player)

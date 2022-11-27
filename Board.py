@@ -66,6 +66,9 @@ class Board:
         king = self.getKing()
         king_x = king[0][0]
         king_y = king[1][0]
+        # if king is on the edge of the board return False
+        if king_x == 0 or king_x == self.__size - 1 or king_y == 0 or king_y == self.__size - 1:
+            return False
         # check if the KING is surrounded by least 1 black piece
         if self.__board[king_x - 1][king_y] == 2 or self.__board[king_x + 1][king_y] == 2 or \
                 self.__board[king_x][king_y - 1] == 2 or self.__board[king_x][king_y + 1] == 2:
@@ -136,14 +139,43 @@ class Board:
 
     def isKingCaptured(self):
         # check if the KING is captured
-        if self.isKingOnThrone() and self.nEnemiesCloseToKing() == 4:
-            return True
-        elif self.isKingNearThrone() and self.nEnemiesCloseToKing() == 3:
-            return True
-        elif self.nEnemiesCloseToKing() == 2:
-            return True
-        elif self.isKingNearCamp() and self.nEnemiesCloseToKing() == 1:
-            return True
+        king = self.getKing()
+        king_x = king[0][0]
+        king_y = king[1][0]
+        # if king is on the edge of the board return False
+        if king_x == 0 or king_x == self.__size - 1 or king_y == 0 or king_y == self.__size - 1:
+            return False
+        # check if king is on the throne
+        if self.isKingOnThrone():
+            # number of black pieces around the throne must be 4
+            if self.nEnemiesCloseToKing() == 4:
+                return True
+        # check if king is near the throne
+        if self.isKingNearThrone():
+            # number of black pieces around the throne must be 3
+            if self.nEnemiesCloseToKing() == 3:
+                return True
+        # check if king is near the camp
+        if self.isKingNearCamp():
+            # number of black pieces around the throne must be 2
+            if self.nEnemiesCloseToKing() == 1:
+                # check that the black piece is on the opposite side of the camp
+                if self.__board[king_x - 1][king_y] == 2 and self.__board[king_x + 1][king_y] == 0:
+                    return True
+                if self.__board[king_x + 1][king_y] == 2 and self.__board[king_x - 1][king_y] == 0:
+                    return True
+                if self.__board[king_x][king_y - 1] == 2 and self.__board[king_x][king_y + 1] == 0:
+                    return True
+                if self.__board[king_x][king_y + 1] == 2 and self.__board[king_x][king_y - 1] == 0:
+                    return True
+        # if the king is not on the throne, near the throne or near the camp
+        # number of black pieces around the throne must be 2
+        if self.nEnemiesCloseToKing() == 2:
+            # check that the black pieces are on the opposite sides of the king
+            if self.__board[king_x - 1][king_y] == 2 and self.__board[king_x + 1][king_y] == 2:
+                return True
+            if self.__board[king_x][king_y - 1] == 2 and self.__board[king_x][king_y + 1] == 2:
+                return True
         return False
 
     # check if this works
@@ -201,7 +233,9 @@ class Board:
             flags = [True, True, True, True]
             while j < self.__size:
                 if self.getCenterCoordinate() != x or self.getCenterCoordinate() != y:
-                    if x - j >= 0 and board[x - j][y] == 0 and not self.isCamp(x - j, y) and not self.isCenter(x - j, y) and flags[0]:
+                    if x - j >= 0 and board[x - j][y] == 0 and not self.isCamp(x - j, y) and not self.isCenter(x - j,
+                                                                                                               y) and \
+                            flags[0]:
                         moves.append(str(x) + str(y) + "_" + str(x - j) + str(y))
                     else:
                         flags[0] = False
@@ -274,7 +308,7 @@ class Board:
                     # check every possible move for the black piece, black pieces can move in a camp until they leave it
                     if x - j >= 0 and board[x - j][y] == 0 and self.isCamp(x, y) and self.isCamp(x - j,
                                                                                                  y) and not self.isCenter(
-                            x - j, y) and flags[4]:
+                        x - j, y) and flags[4]:
                         moves.append(str(x) + str(y) + "_" + str(x - j) + str(y))
                     else:
                         flags[4] = False
@@ -285,7 +319,7 @@ class Board:
                         flags[5] = False
                     if y - j >= 0 and board[x][y - j] == 0 and self.isCamp(x, y) and self.isCamp(x,
                                                                                                  y - j) and not self.isCenter(
-                            x, y - j) and flags[6]:
+                        x, y - j) and flags[6]:
                         moves.append(str(x) + str(y) + "_" + str(x) + str(y - j))
                     else:
                         flags[6] = False
@@ -353,7 +387,7 @@ class Board:
     def canWhiteBlockFrom(self, x, y):
         element = 0
         inc = 1
-        # check if the piece at (x, y) can eat a black piece going right
+        # check if the piece at (x, y) can block a black piece going right
         while element == 0:
             if y + inc == self.__size or self.isCamp(x, y + inc):
                 break
@@ -391,6 +425,55 @@ class Board:
             return True
         return False
 
+    def canBlackEatFrom(self, x, y):
+        element = 0
+        inc = 1
+        # check if the piece at (x, y) can eat a white piece going right
+        while element == 0:
+            if self.isCamp(x, y + inc) or y + inc == self.__size:
+                break
+            element = self.getValueAt(x, y + inc)
+            inc += 1
+        if element == 1 and (
+                y + inc == self.__size or self.getValueAt(x, y + inc) == 2) or self.isCamp(x, y + inc) or \
+                self.isCenter(x, y + inc):
+            return True
+        element = 0
+        # check if the piece at (x, y) can eat a white piece going left
+        inc = -1
+        while element == 0:
+            if self.isCamp(x, y + inc) or y + inc == self.__size:
+                break
+            element = self.getValueAt(x, y + inc)
+            inc -= 1
+        if element == 1 and (
+                y + inc == self.__size or self.getValueAt(x, y + inc) == 2) or \
+                self.isCamp(x, y + inc) or self.isCenter(x, y + inc):
+            return True
+        # check if the piece at (x, y) can eat a white piece going down
+        inc = 1
+        while element == 0:
+            if self.isCamp(x + inc, y) or x + inc == self.__size:
+                break
+            element = self.getValueAt(x + inc, y)
+            inc += 1
+        if element == 1 and (
+                x + inc == self.__size or self.getValueAt(x + inc, y) == 2) or \
+                self.isCamp(x + inc, y) or self.isCenter(x + inc, y):
+            return True
+        # check if the piece at (x, y) can eat a white piece going up
+        inc = -1
+        while element == 0:
+            if self.isCamp(x + inc, y) or x + inc == self.__size:
+                break
+            element = self.getValueAt(x + inc, y)
+            inc -= 1
+        if element == 1 and (
+                x + inc == self.__size or self.getValueAt(x + inc, y) == 2) or \
+                self.isCamp(x + inc, y) or self.isCenter(x + inc, y):
+            return True
+        return False
+
     def movePiece(self, move):
         # return a new board with the piece moved
         newBoard = self.getBoard().copy()
@@ -400,7 +483,48 @@ class Board:
         y2 = int(move[4])
         newBoard[x2][y2] = newBoard[x1][y1]
         newBoard[x1][y1] = 0
+        x3, y3 = self.checkIfEat(x1, y1, x2, y2)
+        if x3 != -1:
+            newBoard[x3][y3] = 0
         return newBoard
+
+    def checkIfEat(self, x, y, xnew, ynew):
+        # check if the piece at (x, y) eats a piece by doing the move
+        # first lets check it for white pieces, so basically we check if ther's a black piece near it
+        if self.getBoard()[x][y] == 1:
+            if xnew + 1 < self.__size and self.getBoard()[xnew + 1][ynew] == 2:
+                if xnew + 2 < self.__size and (
+                        self.getBoard()[xnew + 2][ynew] == 1 or self.getBoard()[xnew + 2][ynew] == 3 or self.isCamp(xnew + 2, ynew) or self.isCenter(xnew + 2, ynew)):
+                    return xnew + 1, ynew
+            if xnew - 1 >= 0 and self.getBoard()[xnew - 1][ynew] == 2:
+                if xnew - 2 >= 0 and (self.getBoard()[xnew - 2][ynew] == 1 or self.getBoard()[xnew - 2][ynew] == 3 or self.isCamp(xnew - 2, ynew) or self.isCenter(xnew - 2, ynew)):
+                    return xnew - 1, ynew
+            if ynew + 1 < self.__size and self.getBoard()[xnew][ynew + 1] == 2:
+                if ynew + 2 < self.__size and (
+                        self.getBoard()[xnew][ynew + 2] == 1 or self.getBoard()[xnew][ynew + 2] == 3 or self.isCamp(xnew, ynew + 2) or self.isCenter(xnew, ynew + 2)):
+                    return xnew, ynew + 1
+            if ynew - 1 >= 0 and self.getBoard()[xnew][ynew - 1] == 2:
+                if ynew - 2 >= 0 and (self.getBoard()[xnew][ynew - 2] == 1 or self.getBoard()[xnew][ynew - 2] == 3 or self.isCamp(xnew, ynew - 2) or self.isCenter(xnew, ynew - 2)):
+                    return xnew, ynew - 1
+        # now lets check it for black pieces, so basically we check if there's a white piece near it
+        if self.getBoard()[x][y] == 2:
+            if xnew + 1 < self.__size and self.getBoard()[xnew + 1][ynew] == 1:
+                if xnew + 2 < self.__size and (self.getBoard()[xnew + 2][ynew] == 2 or
+                                               self.isCamp(xnew + 2, ynew) or self.isCenter(xnew + 2, ynew)):
+                    return xnew + 1, ynew
+            if xnew - 1 >= 0 and self.getBoard()[xnew - 1][ynew] == 1:
+                if xnew - 2 >= 0 and (self.getBoard()[xnew - 2][ynew] == 2 or
+                                      self.isCamp(xnew - 2, ynew) or self.isCenter(xnew - 2, ynew)):
+                    return xnew - 1, ynew
+            if ynew + 1 < self.__size and self.getBoard()[xnew][ynew + 1] == 1:
+                if ynew + 2 < self.__size and (self.getBoard()[xnew][ynew + 2] == 2 or
+                                               self.isCamp(xnew, ynew + 2) or self.isCenter(xnew, ynew + 2)):
+                    return xnew, ynew + 1
+            if ynew - 1 >= 0 and self.getBoard()[xnew][ynew - 1] == 1:
+                if ynew - 2 >= 0 and (self.getBoard()[xnew][ynew - 2] == 2 or
+                                      self.isCamp(xnew, ynew - 2) or self.isCenter(xnew, ynew - 2)):
+                    return xnew, ynew - 1
+        return -1, -1
 
     def convertBoard(self, board):
         # convert the board to a 2D array

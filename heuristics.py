@@ -14,7 +14,7 @@ def heuristic(board, score):
         move_score += 75*board.nEnemiesCloseToKing()
     # check if the KING is near the throne in the middle of the board
     if board.isKingNearThrone():
-        move_score -= 50
+        move_score -= 10
     # check if the KING is at the edge of the board (WHITE wins)
     if board.isKingAtEdge():
         move_score -= 10000
@@ -92,8 +92,13 @@ def black_good_moves(board):
     top_left_score = top_left_pieces * weight_score[1]
     bottom_right_score = bottom_right_pieces * weight_score[2]
     bottom_left_score = bottom_left_pieces * weight_score[3]
+    # also add for every black piece canBlackEatFrom(x, y)
+    eat_score = 0
+    for i in range(len(black_pieces_x)):
+        if board.canBlackEatFrom(black_pieces_x[i], black_pieces_y[i]):
+            eat_score += 1
     # return the sum of all the weighted scores
-    return top_right_score + top_left_score + bottom_right_score + bottom_left_score
+    return top_right_score + top_left_score + bottom_right_score + bottom_left_score + eat_score*0.5
 
 
 def white_good_moves(board):
