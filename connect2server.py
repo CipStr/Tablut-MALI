@@ -56,8 +56,6 @@ def connect_to_server(player):
             state = receive_current_state(sock)
         while True:
             new_state = receive_current_state(sock)
-            print("Current state")
-            print(new_state)
             if new_state != state:
                 # receive move from the player
                 move_list = player.play(new_state)
