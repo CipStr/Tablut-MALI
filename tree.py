@@ -2,13 +2,16 @@
 # the tree is generated using the Board class defined in Board.py
 # the tree is generated using the heuristic function defined in heuristics.py
 
+import time
 import numpy as np
 import Board
 import heuristics
 
 
 # define the minimax algorithm
-def minimax(board, depth, player, alpha, beta, preceding_moves):
+def minimax(board, depth, player, alpha, beta, preceding_moves, timer):
+    if timeOut(timer):
+        raise TimeoutError
     board_class = Board.Board()
     board_class.setBoard(board)
     # if the depth is 0, return the heuristic score of the board
@@ -25,7 +28,7 @@ def minimax(board, depth, player, alpha, beta, preceding_moves):
             new_board = Board.Board()
             new_board.setBoard(board)
             new_board.setBoard(new_board.movePiece(move))
-            tmp_eval, tmp_move = minimax(new_board.getBoard(), depth - 1, "white", alpha, beta, preceding_moves)
+            tmp_eval, tmp_move = minimax(new_board.getBoard(), depth - 1, "white", alpha, beta, preceding_moves, timer)
             maxEval = max(maxEval, tmp_eval)
             alpha = max(alpha, tmp_eval)
             if maxEval == tmp_eval:
@@ -48,7 +51,7 @@ def minimax(board, depth, player, alpha, beta, preceding_moves):
             new_board = Board.Board()
             new_board.setBoard(board)
             new_board.setBoard(new_board.movePiece(move))
-            tmp_eval, tmp_move = minimax(new_board.getBoard(), depth - 1, "black", alpha, beta, preceding_moves)
+            tmp_eval, tmp_move = minimax(new_board.getBoard(), depth - 1, "black", alpha, beta, preceding_moves, timer)
             minEval = min(minEval, tmp_eval)
             beta = min(beta, tmp_eval)
             if minEval == tmp_eval:
@@ -60,3 +63,8 @@ def minimax(board, depth, player, alpha, beta, preceding_moves):
             best_move = moves[0]
         return minEval, best_move
 
+
+def timeOut(timer):
+    if time.time() - timer.time > timer.timeout:
+        return True
+    return False
