@@ -7,9 +7,11 @@ import sys
 
 # create Player class
 class Player:
-    def __init__(self, name, color):
+    def __init__(self, name, color, timeout, server):
         self.name = name
         self.color = color
+        self.timeout = timeout
+        self.server = server
         self.board = Board.Board()
         self.move = []
 
@@ -40,5 +42,7 @@ class Player:
 
 
 color = sys.argv[1]
-player = Player("Luca", color)
+timeout = sys.argv[2]
+server_ip = sys.argv[3]
+player = Player("Luca", color, timeout, server_ip)
 cns.connect_to_server(player)

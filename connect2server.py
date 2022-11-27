@@ -34,15 +34,15 @@ def convert_move_to_json_for_server(move):
     return json_move
 
 
-def connect_to_server(player):
+def connect_to_server(player, server_ip):
     # first connection with the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         if player.color == 'white':
             # Connect the socket to the port where the server is listening
-            server_address = ('localhost', 5800)
+            server_address = (player.server, 5800)
         elif player.color == 'black':
             # Connect the socket to the port where the server is listening
-            server_address = ('localhost', 5801)
+            server_address = (player.server, 5801)
         else:
             raise Exception("Se giochi o sei bianco oppure sei nero") # rassista :D
 
