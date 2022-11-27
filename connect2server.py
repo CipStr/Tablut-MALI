@@ -34,7 +34,7 @@ def convert_move_to_json_for_server(move):
     return json_move
 
 
-def connect_to_server(player, server_ip):
+def connect_to_server(player):
     # first connection with the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         if player.color == 'white':
